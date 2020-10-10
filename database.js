@@ -21,6 +21,10 @@ const getAllProductsOfStore = (storeId) => {
 	return data.allProducts.filter(product => product.storeId === storeId)
 }
 
+const getAllProducts = () => {
+	return data.allProducts
+}
+
 const getProduct = (productId) => {
 	return data.allProducts.find(product => product.productId === productId)
 }
@@ -28,6 +32,7 @@ const getProduct = (productId) => {
 module.exports = {
 	getAllStore,
 	getStore,
+	getAllProducts,
 	getAllProductsOfStore,
 	getProduct
 }
