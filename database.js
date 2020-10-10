@@ -14,10 +14,18 @@ const save = () => {
 const getAllStore = () => data.allStores
 
 const getStore = (storeId) => {
-	return data.allStores.find(store => store.storeId === storeId)
+	const store = data.allStores.find(store => store.storeId === storeId)
+	store.webCount++ 
+	
+	save()
+	return store
 }
 
 const getAllProductsOfStore = (storeId) => {
+	const store = data.allStores.find(store => store.storeId === storeId)
+	store.webCount++ 
+
+	save()
 	return data.allProducts.filter(product => product.storeId === storeId)
 }
 
