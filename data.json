@@ -1,1 +1,19 @@
-{}
+{
+	"allProducts": [
+		{
+			"storeId": "2264e4f3-7a72-4c27-900d-41ce47fbc1ba",
+			"productId": "68916dbf-e031-4a1d-9cdb-468210eab7e6",
+			"name": "Ateliê Dona Bonita",
+			"discount": 15,
+			"photoImgUrl": "https://source.unsplash.com/random/674x385"
+		}
+	],
+	"allStores": [
+		{
+			"storeId": "2264e4f3-7a72-4c27-900d-41ce47fbc1ba",
+			"name": "StorePlus",
+			"photoImgUrl": "https://source.unsplash.com/random/466x320",
+			"bannerImgUrl": "https://source.unsplash.com/random/1640x195"
+		}
+	]
+}
