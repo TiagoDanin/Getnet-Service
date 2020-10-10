@@ -22,5 +22,17 @@
 			"photoImgUrl": "https://source.unsplash.com/random/466x320",
 			"bannerImgUrl": "https://source.unsplash.com/random/1640x195"
 		}
+	],
+	"allConversation": [
+		{
+			"conversationId": "b65b7ddd-e84c-4eec-8d4b-e4b794db93b4",
+			"messages": [
+				{
+					"messageId": "56d41ed7-e21a-445e-89fd-4a88d551bfaa",
+					"isMe": false,
+					"text": "Olá, bom dia!"
+				}
+			]
+		}
 	]
 }

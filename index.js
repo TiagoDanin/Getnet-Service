@@ -179,4 +179,123 @@ app.get('/product/:productId', (request, responseExpress) => {
 	})
 })
 
+/**
+ * @swagger
+ *
+ * /conversation/all:
+ *   get:
+ *     description: Ver lista de todas as conversas 
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: lista de todas as conversas
+ */
+app.get('/conversation/all', (request, responseExpress) => {
+	responseExpress.json({
+		isOk: true,
+		allConversation: database.getAllConversation()
+	})
+})
+
+/**
+ * @swagger
+ *
+ * /conversation/create:
+ *   post:
+ *     description: Criar uma nova conversa
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: body
+ *         description: Dados para criar a conversa
+ *         in: body
+ *         schema:
+ *           type: object
+ *           required:
+ *             - text
+ *           properties:
+ *             text:
+ *               description: Texto da primeira mensagem da conversa
+ *               type: string
+ *               example: ola
+ *     responses:
+ *       200:
+ *         description: retorna informações de uma conversa criada
+ */
+app.post('/conversation/create', (request, responseExpress) => {
+	const { text } = request.body
+	responseExpress.json({
+		isOk: true,
+		...database.addConversation(text)
+	})
+})
+
+/**
+ * @swagger
+ *
+ * /conversation/{conversationId}:
+ *   get:
+ *     description: Ver informações de uma conversa
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: conversationId
+ *         description: ID do conversa.
+ *         in: path
+ *         required: true
+ *         type: string
+ *         example: b65b7ddd-e84c-4eec-8d4b-e4b794db93b4
+ *     responses:
+ *       200:
+ *         description: retorna informações de uma conversa
+ */
+app.get('/conversation/:conversationId', (request, responseExpress) => {
+	const { conversationId } = request.params
+	responseExpress.json({
+		isOk: true,
+		...database.getConversation(conversationId)
+	})
+})
+
+/**
+ * @swagger
+ *
+ * /conversation/{conversationId}:
+ *   post:
+ *     description: Responde uma mensagem de uma conversa
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: conversationId
+ *         description: ID do conversa.
+ *         in: path
+ *         required: true
+ *         type: string
+ *         example: b65b7ddd-e84c-4eec-8d4b-e4b794db93b4
+ *       - name: body
+ *         description: Dados para criar a mensagem
+ *         in: body
+ *         schema:
+ *           type: object
+ *           required:
+ *             - text
+ *           properties:
+ *             text:
+ *               description: Texto da mensagem da conversa
+ *               type: string
+ *               example: ola
+ *     responses:
+ *       200:
+ *         description: retorna informações de uma conversa com a nova mensagem
+ */
+app.post('/conversation/:conversationId', (request, responseExpress) => {
+	const { conversationId } = request.params
+	const { text } = request.body
+	responseExpress.json({
+		isOk: true,
+		...database.replyConversation(conversationId, text)
+	})
+})
+
 app.listen(port, () => console.log(`App listening at http://localhost:${port}`))

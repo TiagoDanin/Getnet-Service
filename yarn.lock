@@ -4164,7 +4164,7 @@ swagger-parser@10.0.2:
   dependencies:
     "@apidevtools/swagger-parser" "10.0.2"
 
-swagger-ui-dist@^3.18.1:
+swagger-ui-dist@^3.18.1, swagger-ui-dist@^3.35.1:
   version "3.35.1"
   resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-3.35.1.tgz#5f4c955c3ad958d936ebd20b3e68322d6fc3e8bd"
   integrity sha512-ltrCX8+YWsqDBvCdLJwnO6VsgjV/uzLm+cTEUe0DZ1fAXIxUnNjvE/aAjXiRfNppUnCbUgZvJK1LYPAjF7W1XA==
