@@ -1,13 +1,4 @@
 {
-	"allProducts": [
-		{
-			"storeId": "2264e4f3-7a72-4c27-900d-41ce47fbc1ba",
-			"productId": "68916dbf-e031-4a1d-9cdb-468210eab7e6",
-			"name": "Ateliê Dona Bonita",
-			"discount": 15,
-			"photoImgUrl": "https://source.unsplash.com/random/674x385"
-		}
-	],
 	"allStores": [
 		{
 			"storeId": "2264e4f3-7a72-4c27-900d-41ce47fbc1ba",
@@ -18,11 +9,15 @@
 			"webCount": 5,
 			"applyDiscountsCount": 4,
 			"phoneNumber": "91989347171",
-			"adre": "Avenida Romulo Maiorana, 1222",
+			"andress": "Avenida Romulo Maiorana, 1222",
 			"profileImgUrl": "https://source.unsplash.com/random/77x77",
 			"profileDescription": "Joana, 24 anos, a dois anos entrou no mundo da moda com seu próprio ateliê, sonha um dia ver suas peças em grandes desfiles de moda no mundo inteiro.",
 			"photoImgUrl": "https://source.unsplash.com/random/466x320",
-			"bannerImgUrl": "https://source.unsplash.com/random/1640x195"
+			"productsImgs": [
+				"https://source.unsplash.com/random/450x450",
+				"https://source.unsplash.com/random/450x450",
+				"https://source.unsplash.com/random/450x450"
+			]
 		}
 	],
 	"allConversation": [
@@ -35,6 +30,15 @@
 					"text": "Olá, bom dia!"
 				}
 			]
+		}
+	],
+	"allTransactions": [
+		{
+			"transactionId": "6d06c9e0-166e-4fc5-a65f-e854e1776ee0",
+			"userId": "e7804097-1234-43cc-9df2-9688200b12ad",
+			"amount": "100",
+			"date": "2020-10-11T20:26:46.436Z",
+			"name": "Recarga da carteira"
 		}
 	]
 }

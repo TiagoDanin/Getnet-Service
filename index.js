@@ -87,38 +87,6 @@ app.get('/store/all', (request, responseExpress) => {
 /**
  * @swagger
  *
- * /store/{storeId}/products:
- *   get:
- *     tags:
- *       - store
- *     summary: Ver lista de todos os produtos e um info da loja atual
- *     description: Ver lista de todos os produtos e um info da loja atual
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: storeId
- *         description: ID da loja.
- *         in: path
- *         required: true
- *         type: string
- *         example: 2264e4f3-7a72-4c27-900d-41ce47fbc1ba
- *     responses:
- *       200:
- *         description: lista informações e lista de produto de uma loja
- */
-app.get('/store/:storeId/products', (request, responseExpress) => {
-	const {storeId} = request.params
-	responseExpress.json({
-		isOk: true,
-		bannerImgUrl: database.getStore(storeId).bannerImgUrl,
-		allProducts: database.getAllProductsOfStore(storeId),
-		allStores: database.getAllStore()
-	})
-})
-
-/**
- * @swagger
- *
  * /store/{storeId}:
  *   get:
  *     tags:
@@ -143,58 +111,6 @@ app.get('/store/:storeId', (request, responseExpress) => {
 	responseExpress.json({
 		isOk: true,
 		...database.getStore(storeId)
-	})
-})
-
-/**
- * @swagger
- *
- * /product/all:
- *   get:
- *     tags:
- *       - product
- *     summary: Ver lista de todos os produtos
- *     description: Ver lista de todos os produtos
- *     produces:
- *       - application/json
- *     responses:
- *       200:
- *         description: lista de todos produtos
- */
-app.get('/product/all', (request, responseExpress) => {
-	responseExpress.json({
-		isOk: true,
-		allProducts: database.getAllProducts()
-	})
-})
-
-/**
- * @swagger
- *
- * /product/{productId}:
- *   get:
- *     tags:
- *       - product
- *     summary: Ver informações de um produto
- *     description: Ver informações de um produto
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: productId
- *         description: ID do produto.
- *         in: path
- *         required: true
- *         type: string
- *         example: 68916dbf-e031-4a1d-9cdb-468210eab7e6
- *     responses:
- *       200:
- *         description: retorna informações de um produto
- */
-app.get('/product/:productId', (request, responseExpress) => {
-	const {productId} = request.params
-	responseExpress.json({
-		isOk: true,
-		...database.getProduct(productId)
 	})
 })
 
@@ -358,7 +274,7 @@ app.post('/conversation/:conversationId', (request, responseExpress) => {
  *         schema:
  *           type: object
  *           required:
- *             - storeId
+ *             - userId
  *             - cardNumber
  *             - amount
  *             - name
@@ -366,8 +282,8 @@ app.post('/conversation/:conversationId', (request, responseExpress) => {
  *             - expirationYear
  *             - securityCode
  *           properties:
- *             storeId:
- *               description: ID da loja.
+ *             userId:
+ *               description: ID do user.
  *               type: string
  *               example: 2264e4f3-7a72-4c27-900d-41ce47fbc1ba
  *             cardNumber:
@@ -400,6 +316,7 @@ app.post('/conversation/:conversationId', (request, responseExpress) => {
  */
 app.post('/transaction/create', (request, responseExpress) => {
 	const {
+		userId,
 		cardNumber,
 		amount,
 		name,
@@ -423,31 +340,128 @@ app.post('/transaction/create', (request, responseExpress) => {
 					expirationYear: expirationYear,
 					securityCode: securityCode
 				}).then(responsePayment => {
+					const payment = responsePayment.data
+					let transaction = {}
+					if (payment.status === 'APPROVED') {
+						transaction = database.addTransaction(userId, amount, payment.credit.authorized_at, 'Recarga da carteira')
+					}
+
 					responseExpress.json({
 						isOk: true,
-						payment: responsePayment.data
+						status: payment.status,
+						payment,
+						transaction
 					})
 				}).catch(error => {
-					console.error(error.response.data)
 					responseExpress.json({
 						isOk: false,
-						error: error.response.data
+						error: error.toString()
 					})
 				})
 			}).catch(error => {
-				console.error(error.response.data)
 				responseExpress.json({
 					isOk: false,
-					error: error.response.data
+					error: error.toString()
 				})
 			})
 		}).catch(error => {
-			console.error(error.response.data)
 			responseExpress.json({
 				isOk: false,
-				error: error.response.data
+				error: error.toString()
 			})
 		})
+})
+
+/**
+ * @swagger
+ *
+ * /transaction/{userId}:
+ *   get:
+ *     tags:
+ *       - transaction
+ *     summary: Ver informações de uma carteira
+ *     description: Ver informações de uma carteira
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: userId
+ *         description: ID do user.
+ *         in: path
+ *         required: true
+ *         type: string
+ *         example: e7804097-1234-43cc-9df2-9688200b12ad
+ *     responses:
+ *       200:
+ *         description: retorna informações da carteira de um user
+ */
+app.get('/transaction/:userId', (request, responseExpress) => {
+	const {userId} = request.params
+	const transactions = database.getTransactionsOfUser(userId)
+	const total = transactions.reduce((total, transaction) => total + Number(transaction.amount), 0)
+
+	responseExpress.json({
+		isOk: true,
+		total,
+		transactions
+	})
+})
+
+/**
+ * @swagger
+ *
+ * /transaction/{userIdFrom}/{userIdTo}/{amount}/{text}:
+ *   get:
+ *     tags:
+ *       - transaction
+ *     summary: Enviar dinheiro
+ *     description: Enviar dinheiro
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: userIdFrom
+ *         description: ID do user que vai enviar.
+ *         in: path
+ *         required: true
+ *         type: string
+ *         example: e7804097-1234-43cc-9df2-9688200b12ad
+ *       - name: userIdTo
+ *         description: ID do user que vai receber.
+ *         in: path
+ *         required: true
+ *         type: string
+ *         example: a1036fae-07b2-4d75-907b-51d74c7878a6
+ *       - name: amount
+ *         description: Valor.
+ *         in: path
+ *         required: true
+ *         type: string
+ *         example: "100"
+ *       - name: text
+ *         description: Texto sobre o pagamento.
+ *         in: path
+ *         required: true
+ *         type: string
+ *         example: "Rouba B23"
+ *     responses:
+ *       200:
+ *         description: retorna informações da carteira
+ */
+app.get('/transaction/:userIdFrom/:userIdTo/:amount/:text', (request, responseExpress) => {
+	const {userIdFrom, userIdTo, amount, text} = request.params
+	const dateTransaction = (new Date()).toISOString()
+
+	const transaction = database.addTransaction(userIdFrom, `-${amount}`, dateTransaction, text)
+	database.addTransaction(userIdTo, `${amount}`, dateTransaction, text)
+
+	const transactions = database.getTransactionsOfUser(userIdFrom)
+	const total = transactions.reduce((total, transaction) => total + Number(transaction.amount), 0)
+
+	responseExpress.json({
+		isOk: true,
+		total,
+		payTransaction: transaction,
+		transactions
+	})
 })
 
 app.listen(port, () => console.log(`App listening at http://localhost:${port}`))

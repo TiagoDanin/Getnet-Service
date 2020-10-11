@@ -21,22 +21,6 @@ const getStore = storeId => {
 	return store
 }
 
-const getAllProductsOfStore = storeId => {
-	const store = data.allStores.find(store => store.storeId === storeId)
-	store.webCount++
-
-	save()
-	return data.allProducts.filter(product => product.storeId === storeId)
-}
-
-const getAllProducts = () => {
-	return data.allProducts
-}
-
-const getProduct = productId => {
-	return data.allProducts.find(product => product.productId === productId)
-}
-
 const getAllConversation = () => {
 	return data.allConversation
 }
@@ -81,14 +65,39 @@ const replyConversation = (conversationId, text, isMe) => {
 	return conversation
 }
 
+const addTransaction = (userId, amount, date, name) => {
+	amount = Number(amount) + 0.0
+	amount = amount.toString()
+
+	const transaction = {
+		transactionId: uuidv4(),
+		userId,
+		amount,
+		date,
+		name
+	}
+
+	data.allTransactions.unshift(transaction)
+	save()
+	return transaction
+}
+
+const getTransactions = (transactionId) => {
+	return data.allTransactions.filter(transaction => transaction.transactionId === transactionId)
+}
+
+const getTransactionsOfUser = (userId) => {
+	return data.allTransactions.filter(transaction => transaction.userId === userId)
+}
+
 module.exports = {
 	getAllStore,
 	getStore,
-	getAllProducts,
-	getAllProductsOfStore,
-	getProduct,
 	getAllConversation,
 	getConversation,
 	addConversation,
-	replyConversation
+	replyConversation,
+	addTransaction,
+	getTransactions,
+	getTransactionsOfUser
 }
