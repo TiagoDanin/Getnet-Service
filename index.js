@@ -2,28 +2,27 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const swaggerUi = require('swagger-ui-express')
-const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerJSDoc = require('swagger-jsdoc')
+
+const api = require('./api')
+const database = require('./database')
 
 const app = express()
 const swaggerSpec = swaggerJSDoc({
 	definition: {
-	  openapi: '3.0.0',
-	  info: {
-		title: 'API Doc',
-		version: '1.0.0',
-	  },
+		info: {
+			title: 'API Doc',
+			version: '1.0.1'
+	  }
 	},
-	apis: ['./index.js'],
-  });
-const database = require('./database')
+	apis: ['./index.js']
+})
 
 const port = process.env.PORT
 
 app.set('json spaces', 4)
 
-app.use(bodyParser.urlencoded({
-	extended: false
-}))
+app.use(bodyParser.json())
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
@@ -34,6 +33,8 @@ app.get('/', (request, responseExpress) => responseExpress.send('Hello World!'))
  *
  * /swagger.json:
  *   get:
+ *     tags:
+ *       - base
  *     description: Ober OpenAPI especificação (Use para exportar em Postman ou Swagger UI)
  *     produces:
  *       - application/json
@@ -48,6 +49,8 @@ app.get('/swagger.json', (request, responseExpress) => responseExpress.json(swag
  *
  * /api:
  *   get:
+ *     tags:
+ *       - base
  *     description: Ver se a API tá online
  *     produces:
  *       - application/json
@@ -62,6 +65,8 @@ app.get('/api', (request, responseExpress) => responseExpress.json({isOk: true})
  *
  * /store/all:
  *   get:
+ *     tags:
+ *       - store
  *     description: Ver lista de todas as lojas
  *     produces:
  *       - application/json
@@ -76,12 +81,13 @@ app.get('/store/all', (request, responseExpress) => {
 	})
 })
 
-
 /**
  * @swagger
  *
  * /store/{storeId}/products:
  *   get:
+ *     tags:
+ *       - store
  *     description: Ver lista de todos os produtos e um info da loja atual
  *     produces:
  *       - application/json
@@ -97,10 +103,10 @@ app.get('/store/all', (request, responseExpress) => {
  *         description: lista informações e lista de produto de uma loja
  */
 app.get('/store/:storeId/products', (request, responseExpress) => {
-	const { storeId } = request.params
+	const {storeId} = request.params
 	responseExpress.json({
 		isOk: true,
-		bannerImgUrl: database.getStore(storeId).bannerImgUrl, 
+		bannerImgUrl: database.getStore(storeId).bannerImgUrl,
 		allProducts: database.getAllProductsOfStore(storeId),
 		allStores: database.getAllStore()
 	})
@@ -111,6 +117,8 @@ app.get('/store/:storeId/products', (request, responseExpress) => {
  *
  * /store/{storeId}:
  *   get:
+ *     tags:
+ *       - store
  *     description: Ver informações de uma loja
  *     produces:
  *       - application/json
@@ -126,7 +134,7 @@ app.get('/store/:storeId/products', (request, responseExpress) => {
  *         description: retorna informações de uma loja
  */
 app.get('/store/:storeId', (request, responseExpress) => {
-	const { storeId } = request.params
+	const {storeId} = request.params
 	responseExpress.json({
 		isOk: true,
 		...database.getStore(storeId)
@@ -138,6 +146,8 @@ app.get('/store/:storeId', (request, responseExpress) => {
  *
  * /product/all:
  *   get:
+ *     tags:
+ *       - product
  *     description: Ver lista de todos os produtos
  *     produces:
  *       - application/json
@@ -148,7 +158,7 @@ app.get('/store/:storeId', (request, responseExpress) => {
 app.get('/product/all', (request, responseExpress) => {
 	responseExpress.json({
 		isOk: true,
-		allProducts: database.getAllProducts(),
+		allProducts: database.getAllProducts()
 	})
 })
 
@@ -157,6 +167,8 @@ app.get('/product/all', (request, responseExpress) => {
  *
  * /product/{productId}:
  *   get:
+ *     tags:
+ *       - product
  *     description: Ver informações de um produto
  *     produces:
  *       - application/json
@@ -172,7 +184,7 @@ app.get('/product/all', (request, responseExpress) => {
  *         description: retorna informações de um produto
  */
 app.get('/product/:productId', (request, responseExpress) => {
-	const { productId } = request.params
+	const {productId} = request.params
 	responseExpress.json({
 		isOk: true,
 		...database.getProduct(productId)
@@ -184,7 +196,9 @@ app.get('/product/:productId', (request, responseExpress) => {
  *
  * /conversation/all:
  *   get:
- *     description: Ver lista de todas as conversas 
+ *     tags:
+ *       - conversation
+ *     description: Ver lista de todas as conversas
  *     produces:
  *       - application/json
  *     responses:
@@ -203,18 +217,25 @@ app.get('/conversation/all', (request, responseExpress) => {
  *
  * /conversation/create:
  *   post:
+ *     tags:
+ *       - conversation
  *     description: Criar uma nova conversa
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: body
+ *       - in: body
+ *         name: body
  *         description: Dados para criar a conversa
- *         in: body
+ *         required: true
  *         schema:
  *           type: object
  *           required:
  *             - text
  *           properties:
+ *             isMe:
+ *               description: Sou eu?
+ *               type: boolean
+ *               example: true
  *             text:
  *               description: Texto da primeira mensagem da conversa
  *               type: string
@@ -224,10 +245,10 @@ app.get('/conversation/all', (request, responseExpress) => {
  *         description: retorna informações de uma conversa criada
  */
 app.post('/conversation/create', (request, responseExpress) => {
-	const { text } = request.body
+	const {text, isMe} = request.body
 	responseExpress.json({
 		isOk: true,
-		...database.addConversation(text)
+		...database.addConversation(text, isMe)
 	})
 })
 
@@ -236,6 +257,8 @@ app.post('/conversation/create', (request, responseExpress) => {
  *
  * /conversation/{conversationId}:
  *   get:
+ *     tags:
+ *       - conversation
  *     description: Ver informações de uma conversa
  *     produces:
  *       - application/json
@@ -251,7 +274,7 @@ app.post('/conversation/create', (request, responseExpress) => {
  *         description: retorna informações de uma conversa
  */
 app.get('/conversation/:conversationId', (request, responseExpress) => {
-	const { conversationId } = request.params
+	const {conversationId} = request.params
 	responseExpress.json({
 		isOk: true,
 		...database.getConversation(conversationId)
@@ -263,6 +286,8 @@ app.get('/conversation/:conversationId', (request, responseExpress) => {
  *
  * /conversation/{conversationId}:
  *   post:
+ *     tags:
+ *       - conversation
  *     description: Responde uma mensagem de uma conversa
  *     produces:
  *       - application/json
@@ -273,14 +298,19 @@ app.get('/conversation/:conversationId', (request, responseExpress) => {
  *         required: true
  *         type: string
  *         example: b65b7ddd-e84c-4eec-8d4b-e4b794db93b4
- *       - name: body
- *         description: Dados para criar a mensagem
- *         in: body
+ *       - in: body
+ *         name: body
+ *         description: Dados para criar a conversa
+ *         required: true
  *         schema:
  *           type: object
  *           required:
  *             - text
  *           properties:
+ *             isMe:
+ *               description: Sou eu?
+ *               type: boolean
+ *               example: true
  *             text:
  *               description: Texto da mensagem da conversa
  *               type: string
@@ -290,12 +320,122 @@ app.get('/conversation/:conversationId', (request, responseExpress) => {
  *         description: retorna informações de uma conversa com a nova mensagem
  */
 app.post('/conversation/:conversationId', (request, responseExpress) => {
-	const { conversationId } = request.params
-	const { text } = request.body
+	const {conversationId} = request.params
+	const {text, isMe} = request.body
 	responseExpress.json({
 		isOk: true,
-		...database.replyConversation(conversationId, text)
+		...database.replyConversation(conversationId, text, isMe)
 	})
+})
+
+/**
+ * @swagger
+ *
+ * /transaction/create:
+ *   post:
+ *     tags:
+ *       - transaction
+ *     description: Cria uma transação
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: Dados para a transação
+ *         required: true
+ *         schema:
+ *           type: object
+ *           required:
+ *             - storeId
+ *             - cardNumber
+ *             - amount
+ *             - name
+ *             - expirationMonth
+ *             - expirationYear
+ *             - securityCode
+ *           properties:
+ *             storeId:
+ *               description: ID da loja.
+ *               type: string
+ *               example: 2264e4f3-7a72-4c27-900d-41ce47fbc1ba
+ *             cardNumber:
+ *               description: Número do cartão.
+ *               type: string
+ *               example: "5155901222280001"
+ *             amount:
+ *               description: Valor.
+ *               type: string
+ *               example: "100"
+ *             name:
+ *               description: Nome da pessoal.
+ *               type: string
+ *               example: JOAO DA SILVA
+ *             expirationMonth:
+ *               description: Mês exp. do cartão.
+ *               type: string
+ *               example: "12"
+ *             expirationYear:
+ *               description: Ano exp. do cartão.
+ *               type: string
+ *               example: "21"
+ *             securityCode:
+ *               description: CVV do cartão.
+ *               type: string
+ *               example: "123"
+ *     responses:
+ *       200:
+ *         description: retorna informações da transação
+ */
+app.post('/transaction/create', (request, responseExpress) => {
+	const {
+		cardNumber,
+		amount,
+		name,
+		expirationMonth,
+		expirationYear,
+		securityCode
+	} = request.body
+	
+	api.getToken()
+		.then(responseToken => {
+			api.getNumberCardToken({
+				token: responseToken.data.access_token,
+				cardNumber: cardNumber
+			}).then(responseNumberCardToken => {
+				api.getPayment({
+					token: responseToken.data.access_token,
+					numberToken: responseNumberCardToken.data.number_token,
+					amount: amount,
+					name: name,
+					expirationMonth: expirationMonth,
+					expirationYear: expirationYear,
+					securityCode: securityCode
+				}).then(responsePayment => {
+					responseExpress.json({
+						isOk: true,
+						payment: responsePayment.data
+					})
+				}).catch(error => {
+					console.error(error.response.data)
+					responseExpress.json({
+						isOk: false,
+						error: error.response.data
+					})
+				})
+			}).catch(error => {
+				console.error(error.response.data)
+				responseExpress.json({
+					isOk: false,
+					error: error.response.data
+				})
+			})
+		}).catch(error => {
+			console.error(error.response.data)
+			responseExpress.json({
+				isOk: false,
+				error: error.response.data
+			})
+		})
 })
 
 app.listen(port, () => console.log(`App listening at http://localhost:${port}`))
