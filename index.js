@@ -35,6 +35,7 @@ app.get('/', (request, responseExpress) => responseExpress.send('Hello World!'))
  *   get:
  *     tags:
  *       - base
+ *     summary: Ober OpenAPI especificação (Use para exportar em Postman ou Swagger UI)
  *     description: Ober OpenAPI especificação (Use para exportar em Postman ou Swagger UI)
  *     produces:
  *       - application/json
@@ -51,6 +52,7 @@ app.get('/swagger.json', (request, responseExpress) => responseExpress.json(swag
  *   get:
  *     tags:
  *       - base
+ *     summary: Ver se a API tá online
  *     description: Ver se a API tá online
  *     produces:
  *       - application/json
@@ -67,6 +69,7 @@ app.get('/api', (request, responseExpress) => responseExpress.json({isOk: true})
  *   get:
  *     tags:
  *       - store
+ *     summary: Ver lista de todas as lojas
  *     description: Ver lista de todas as lojas
  *     produces:
  *       - application/json
@@ -88,6 +91,7 @@ app.get('/store/all', (request, responseExpress) => {
  *   get:
  *     tags:
  *       - store
+ *     summary: Ver lista de todos os produtos e um info da loja atual
  *     description: Ver lista de todos os produtos e um info da loja atual
  *     produces:
  *       - application/json
@@ -119,6 +123,7 @@ app.get('/store/:storeId/products', (request, responseExpress) => {
  *   get:
  *     tags:
  *       - store
+ *     summary: Ver informações de uma loja
  *     description: Ver informações de uma loja
  *     produces:
  *       - application/json
@@ -148,6 +153,7 @@ app.get('/store/:storeId', (request, responseExpress) => {
  *   get:
  *     tags:
  *       - product
+ *     summary: Ver lista de todos os produtos
  *     description: Ver lista de todos os produtos
  *     produces:
  *       - application/json
@@ -169,6 +175,7 @@ app.get('/product/all', (request, responseExpress) => {
  *   get:
  *     tags:
  *       - product
+ *     summary: Ver informações de um produto
  *     description: Ver informações de um produto
  *     produces:
  *       - application/json
@@ -198,6 +205,7 @@ app.get('/product/:productId', (request, responseExpress) => {
  *   get:
  *     tags:
  *       - conversation
+ *     summary: Ver lista de todas as conversas
  *     description: Ver lista de todas as conversas
  *     produces:
  *       - application/json
@@ -219,6 +227,7 @@ app.get('/conversation/all', (request, responseExpress) => {
  *   post:
  *     tags:
  *       - conversation
+ *     summary: Criar uma nova conversa
  *     description: Criar uma nova conversa
  *     produces:
  *       - application/json
@@ -259,6 +268,7 @@ app.post('/conversation/create', (request, responseExpress) => {
  *   get:
  *     tags:
  *       - conversation
+ *     summary: Ver informações de uma conversa
  *     description: Ver informações de uma conversa
  *     produces:
  *       - application/json
@@ -288,6 +298,7 @@ app.get('/conversation/:conversationId', (request, responseExpress) => {
  *   post:
  *     tags:
  *       - conversation
+ *     summary: Responde uma mensagem de uma conversa
  *     description: Responde uma mensagem de uma conversa
  *     produces:
  *       - application/json
@@ -335,6 +346,7 @@ app.post('/conversation/:conversationId', (request, responseExpress) => {
  *   post:
  *     tags:
  *       - transaction
+ *     summary: Cria uma transação
  *     description: Cria uma transação
  *     produces:
  *       - application/json
