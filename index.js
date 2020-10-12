@@ -3,6 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const swaggerUi = require('swagger-ui-express')
 const swaggerJSDoc = require('swagger-jsdoc')
+const cors = require('cors')
 
 const api = require('./api')
 const database = require('./database')
@@ -13,7 +14,7 @@ const swaggerSpec = swaggerJSDoc({
 		info: {
 			title: 'API Doc',
 			version: '1.0.1'
-	  }
+		}
 	},
 	apis: ['./index.js']
 })
@@ -21,6 +22,8 @@ const swaggerSpec = swaggerJSDoc({
 const port = process.env.PORT
 
 app.set('json spaces', 4)
+
+app.use(cors())
 
 app.use(bodyParser.json())
 
@@ -324,21 +327,21 @@ app.post('/transaction/create', (request, responseExpress) => {
 		expirationYear,
 		securityCode
 	} = request.body
-	
+
 	api.getToken()
 		.then(responseToken => {
 			api.getNumberCardToken({
 				token: responseToken.data.access_token,
-				cardNumber: cardNumber
+				cardNumber
 			}).then(responseNumberCardToken => {
 				api.getPayment({
 					token: responseToken.data.access_token,
 					numberToken: responseNumberCardToken.data.number_token,
-					amount: amount,
-					name: name,
-					expirationMonth: expirationMonth,
-					expirationYear: expirationYear,
-					securityCode: securityCode
+					amount,
+					name,
+					expirationMonth,
+					expirationYear,
+					securityCode
 				}).then(responsePayment => {
 					const payment = responsePayment.data
 					let transaction = {}

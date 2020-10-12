@@ -1,8 +1,5 @@
 const axios = require('axios')
 const qs = require('qs')
-const https = require('https')
-const fs = require('fs')
-const {v4: uuidv4} = require('uuid')
 
 const timeout = 1000
 const token = process.env.TOKEN
@@ -56,14 +53,14 @@ const getNumberCardToken = options => {
 
 const getPayment = options => {
 	const data = JSON.stringify({
-		seller_id: "ea8fc390-0818-42bf-a993-60c6f9b9728c",
+		seller_id: 'ea8fc390-0818-42bf-a993-60c6f9b9728c',
 		amount: options.amount,
 		order: {
 			order_id: '12345'
 		},
 		customer: {
-		  customer_id: '12345',
-		  billing_address: {}
+			customer_id: '12345',
+			billing_address: {}
 		},
 		device: {},
 		shippings: [

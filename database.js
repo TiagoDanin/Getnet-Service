@@ -66,7 +66,7 @@ const replyConversation = (conversationId, text, isMe) => {
 }
 
 const addTransaction = (userId, amount, date, name) => {
-	amount = Number(amount) + 0.0
+	amount = Number(amount) + 0
 	amount = amount.toString()
 
 	const transaction = {
@@ -82,11 +82,11 @@ const addTransaction = (userId, amount, date, name) => {
 	return transaction
 }
 
-const getTransactions = (transactionId) => {
+const getTransactions = transactionId => {
 	return data.allTransactions.filter(transaction => transaction.transactionId === transactionId)
 }
 
-const getTransactionsOfUser = (userId) => {
+const getTransactionsOfUser = userId => {
 	return data.allTransactions.filter(transaction => transaction.userId === userId)
 }
 
