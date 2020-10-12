@@ -66,7 +66,7 @@ TOKEN=GETNET_TOKEN
 	<b>Version</b>: ^4.2.3
 </details>
 <details>
-	<summary><a href="https://ghub.io/swagger-ui-dist">swagger-ui-dist</a>: [![NPM version](https://badge.fury.io/js/swagger-ui-dist.svg)](http://badge.fury.io/js/swagger-ui-dist)</summary>
+	<summary><a href="https://ghub.io/swagger-ui-dist">swagger-ui-dist</a>: Sswagger UI Dist</summary>
 	<b>Author</b>: swagger-api, swagger, kyleshockey</br>
 	<b>License</b>: Apache-2.0</br>
 	<b>Version</b>: ^3.35.1
